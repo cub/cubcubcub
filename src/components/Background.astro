@@ -1,0 +1,123 @@
+<script>
+
+function randomInteger(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  async function resize() {
+    if (SQUARE_SIZE > 3) {
+      nbSquarePerLine = Math.ceil(screen.width / SQUARE_SIZE) + 1;
+      nbLine = Math.ceil(screen.height / SQUARE_SIZE) + 1;
+      await draw();
+      SQUARE_SIZE = Math.ceil(SQUARE_SIZE / 2);
+      resize();
+    }
+  }
+
+  function getIndexColor(indexCellule: number): number {
+    const t = randomInteger(-2, 2);
+    if (Math.random() > 0.4) {
+      // reprend une couleur de la ligne du dessus
+      if (indexCellule + t < 0) {
+        return lastLineOfSquare[Math.floor(Math.random() * nbSquarePerLine)];
+      } else if (indexCellule + t > nbSquarePerLine - 1) {
+        return lastLineOfSquare[nbSquarePerLine - 1];
+      } else {
+        return lastLineOfSquare[indexCellule + t];
+      }
+    } else if (lastIndexcolors + t < 0) {
+      // continue la suite de couleur
+      // remonte le tableau par la fin
+      return COLORS.length - 1 - lastIndexcolors + t;
+    } else if (lastIndexcolors + t > COLORS.length) {
+      // recommence au debut du tableau
+      return lastIndexcolors + t - COLORS.length;
+    } else {
+      return lastIndexcolors + t;
+    }
+  }
+
+  async function draw() {
+    console.time(`draw-${nbSquarePerLine}`)
+    // init first line with random colors
+    for (drawbg.x = 0; drawbg.x < nbSquarePerLine; drawbg.x += 1) {
+      lastLineOfSquare[drawbg.x] = Math.floor(Math.random() * COLORS.length);
+    }
+    // draw instant all line
+    for (drawbg.y = 0; drawbg.y < nbLine; drawbg.y += 1) {
+      for (drawbg.x = 0; drawbg.x < nbSquarePerLine; drawbg.x += 1) {
+        const indexColor = getIndexColor(drawbg.x);
+         ctx!.fillStyle = COLORS[indexColor];
+         ctx!.fillRect(drawbg.x * SQUARE_SIZE, drawbg.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        lastLineOfSquare[drawbg.x] = indexColor;
+        lastIndexcolors = indexColor;
+      }
+      await new Promise((resolve) => {
+        requestAnimationFrame(resolve);
+      }); 
+    }
+    console.timeEnd(`draw-${nbSquarePerLine}`)
+  }
+
+  function drawLine() {
+    for (drawbg.x = 0; drawbg.x < nbSquarePerLine; drawbg.x += 1) {
+      const indexColor = getIndexColor(drawbg.x);
+      ctx!.fillStyle = COLORS[indexColor];
+      ctx!.fillRect(drawbg.x * SQUARE_SIZE, drawbg.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+      lastLineOfSquare[drawbg.x] = indexColor;
+      lastIndexcolors = indexColor;
+    }
+  }
+
+  
+  const COLORS = [
+    '#141414',
+    '#191919',
+    '#1F1F1F',
+    '#242424',
+    '#292929',
+    '#2E2E2E',
+    '#333333',
+    '#383838',
+    '#3D3D3D',
+    '#424242',
+    '#474747',
+    '#4D4D4D',
+    '#525252',
+    '#4D4D4D',
+    '#474747',
+    '#424242',
+    '#3D3D3D',
+    '#383838',
+    '#333333',
+    '#2E2E2E',
+    '#292929',
+    '#242424',
+    '#1F1F1F',
+    '#191919',
+    '#141414'
+  ];
+  let SQUARE_SIZE = window.screen.width;
+  const screen = { width: 800, height: 600 };
+  let lastIndexcolors = 0;
+  let nbSquarePerLine = 0;
+  let nbLine = 0;
+  const drawbg = {
+    x: 0,
+    y: 0
+  };
+  const lastLineOfSquare = [] as number[];
+  const canvas = document.querySelector('#background-canvas') as HTMLCanvasElement;
+
+  const ctx = canvas.getContext('2d');
+  const size = Math.max(window.screen.width, window.screen.height);
+  screen.width = size;
+  screen.height = size;
+  canvas.width = screen.width;
+  canvas.height = screen.height;
+  resize();
+
+  
+</script>
+
+<canvas class="fixed z-0" id="background-canvas"></canvas>

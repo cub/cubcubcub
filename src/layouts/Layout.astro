@@ -1,0 +1,119 @@
+---
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props as Props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="/favicon.ico"
+    />
+    <link
+      rel="icon"
+      type="image/gif"
+      href="/favicon.gif"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com/"
+      crossorigin=""
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Ubuntu|Gochi+Hand&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/ress@3.0.0/dist/ress.min.css"
+      integrity="sha256-PVZrFzNgm1MPRBD3/VtiMrkhLsuRYq0yGnaoktygGsk="
+      crossorigin="anonymous"
+    />
+    <title>{title}</title>
+    <meta
+      name="title"
+      content="cubcubcub — Hello my name is cub"
+    />
+    <meta
+      name="description"
+      content="Welcome to my personal website. Get some information about me, my projects and how to contact me."
+    />
+    <style is:global>
+      body {
+        padding: 0;
+        margin: 0;
+        background-color: #222;
+        color: #fff;
+        font-family: Ubuntu, sans-serif;
+        overflow-x: hidden;
+      }
+    </style>
+    <meta
+      property="og:type"
+      content="website"
+    />
+    <meta
+      property="og:url"
+      content="https://cubcubcub.com/"
+    />
+    <meta
+      property="og:title"
+      content="cubcubcub — Hello my name is cub"
+    />
+    <meta
+      property="og:description"
+      content="Welcome to my personal website. Get some information about me, my projects and how to contact me."
+    />
+    <meta
+      property="og:image"
+      content="https://cubcubcub.com/cubcubcub.png"
+    />
+    <meta
+      property="twitter:card"
+      content="summary_large_image"
+    />
+    <meta
+      property="twitter:url"
+      content="https://cubcubcub.com/"
+    />
+    <meta
+      property="twitter:title"
+      content="cubcubcub — Hello my name is cub"
+    />
+    <meta
+      property="twitter:description"
+      content="Welcome to my personal website. Get some information about me, my projects and how to contact me."
+    />
+    <meta
+      property="twitter:image"
+      content="https://cubcubcub.com/cubcubcub.png"
+    />
+  </head>
+  <body>
+    <slot />
+    <script>
+      window.ga =
+        window.ga ||
+        function () {
+          (ga.q = ga.q || []).push(arguments);
+        };
+      ga.l = +new Date();
+      ga("create", "UA-63874212-1", "auto");
+      ga("send", "pageview");
+    </script>
+    <script
+      async
+      src="https://www.google-analytics.com/analytics.js"
+    ></script>
+  </body>
+</html>

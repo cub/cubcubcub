@@ -1,0 +1,26 @@
+{
+  "name": "@example/basics",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "devDependencies": {
+    "@astrojs/tailwind": "^1.0.0",
+    "@astrojs/vue": "^1.0.0",
+    "@types/lodash.throttle": "^4.1.7",
+    "astro": "^1.0.7",
+    "sass": "^1.54.5",
+    "vue": "^3.2.37"
+  },
+  "dependencies": {
+    "lodash.throttle": "^4.1.1",
+    "motion": "^10.14.1",
+    "popmotion": "^11.0.5",
+    "stylefire": "^7.0.3"
+  }
+}
