@@ -38,7 +38,6 @@ function randomInteger(min: number, max: number): number {
   }
 
   async function draw() {
-    console.time(`draw-${nbSquarePerLine}`)
     // init first line with random colors
     for (drawbg.x = 0; drawbg.x < nbSquarePerLine; drawbg.x += 1) {
       lastLineOfSquare[drawbg.x] = Math.floor(Math.random() * COLORS.length);
@@ -56,7 +55,6 @@ function randomInteger(min: number, max: number): number {
         requestAnimationFrame(resolve);
       }); 
     }
-    console.timeEnd(`draw-${nbSquarePerLine}`)
   }
 
   function drawLine() {
@@ -68,7 +66,6 @@ function randomInteger(min: number, max: number): number {
       lastIndexcolors = indexColor;
     }
   }
-
   
   const COLORS = [
     '#141414',
