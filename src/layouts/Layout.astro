@@ -42,16 +42,6 @@ const { title } = Astro.props as Props;
       name="description"
       content="Welcome to my personal website. Get some information about me, my projects and how to contact me."
     />
-    <style is:global>
-      body {
-        padding: 0;
-        margin: 0;
-        background-color: #222;
-        color: #fff;
-        font-family: Ubuntu, sans-serif;
-        overflow-x: hidden;
-      }
-    </style>
     <meta
       property="og:type"
       content="website"
@@ -93,7 +83,7 @@ const { title } = Astro.props as Props;
       content="https://cubcubcub.com/cubcubcub.png"
     />
   </head>
-  <body>
+  <body class="overflow-x-hidden text-white bg-neutral-800">
     <slot />
     <script>
       window.ga =
