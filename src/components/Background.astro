@@ -1,58 +1,8 @@
 <script>
-  function randomInteger(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
+  import throttle from 'lodash.throttle';
 
-  function getIndexColor(indexCell: number, squaresPerLine: number, lastIndexColor: number, previousLine: number[]): number {
-    const t = randomInteger(-2, 2);
-    if (Math.random() > 0.4) {
-      // reprend une couleur de la ligne du dessus
-      if (indexCell + t < 0) {
-        return previousLine[Math.floor(Math.random() * squaresPerLine)];
-      } else if (indexCell + t > squaresPerLine - 1) {
-        return previousLine[squaresPerLine - 1];
-      } else {
-        return previousLine[indexCell + t];
-      }
-    } else if (lastIndexColor + t < 0) {
-      // continue la suite de couleur
-      // remonte le tableau par la fin
-      return COLORS.length - 1 - lastIndexColor + t;
-    } else if (lastIndexColor + t > COLORS.length) {
-      // recommence au debut du tableau
-      return lastIndexColor + t - COLORS.length;
-    } else {
-      return lastIndexColor + t;
-    }
-  }
-
-  function calcMatrix(squareSize: number) {
-    const index = { x: 0, y: 0 };
-    const squaresPerLine = Math.ceil(screen.width / squareSize) + 1;
-    const nbLines = Math.ceil(screen.height / squareSize) + 1;
-    const previousLine = [] as number[];
-    const table = [] as number[][];
-    let lastIndexColor = 0;
-    // init first line with random colors
-    for (index.x = 0; index.x < squaresPerLine; index.x += 1) {
-      previousLine[index.x] = Math.floor(Math.random() * COLORS.length);
-    }
-    // calc all lines
-    for (index.y = 0; index.y < nbLines; index.y += 1) {
-      for (index.x = 0; index.x < squaresPerLine; index.x += 1) {
-        const indexColor = getIndexColor(index.x, squaresPerLine, lastIndexColor, previousLine);
-        /* ctx!.fillStyle = COLORS[indexColor];
-         ctx!.fillRect(index.x * SQUARE_SIZE, index.y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE); */
-        previousLine[index.x] = indexColor;
-        lastIndexColor = indexColor;
-      }
-      table.push([...previousLine]);
-      /*  await new Promise((resolve) => {
-        requestAnimationFrame(resolve);
-      });  */
-    }
-    return { squareSize, table };
-  }
+  const drawThrottle = throttle(draw, 500);
+  window.onresize = drawThrottle;
 
   const COLORS = [
     '#141414',
@@ -81,51 +31,112 @@
     '#191919',
     '#141414'
   ];
-  let squareSize = window.screen.width;
-  const screen = { width: 800, height: 600 };
-
-  const matrix: { squareSize: number; table: number[][] }[] = [];
 
   const canvas = document.querySelector('#background-canvas') as HTMLCanvasElement;
 
-  const ctx = canvas.getContext('2d');
-  const size = Math.max(window.screen.width, window.screen.height);
-  screen.width = window.screen.width;
-  screen.height = window.screen.height;
-  canvas.width = screen.width;
-  canvas.height = screen.height;
-
-  while (squareSize > 3) {
-    matrix.push(calcMatrix(squareSize));
-    squareSize = Math.ceil(squareSize / 2);
+  function randomInteger(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  while (matrix.length) {
-    const m = matrix.shift();
-    if (m) {
-      const cells = getCells(m.table);
-      while (cells.length) {
-        const index = cells.splice(Math.floor(Math.random() * cells.length), 1)[0];
-        ctx!.fillStyle = COLORS[m.table[index.y][index.x]];
-        ctx!.fillRect(index.x * m.squareSize, index.y * m.squareSize, m.squareSize, m.squareSize);
-        await new Promise((resolve) => {
-          //requestAnimationFrame(resolve);
-          setTimeout(resolve, 0);
-        });
+  function getIndexColor(indexCell: number, squaresPerLine: number, lastIndexColor: number, previousLine: number[]): number {
+    const offset = randomInteger(-2, 2);
+    if (Math.random() > 0.4) {
+      // reprend une couleur de la ligne du dessus
+      if (indexCell + offset < 0) {
+        return previousLine[Math.floor(Math.random() * squaresPerLine)];
+      } else if (indexCell + offset > squaresPerLine - 1) {
+        return previousLine[squaresPerLine - 1];
+      } else {
+        return previousLine[indexCell + offset];
       }
+    } else if (lastIndexColor + offset < 0) {
+      // continue la suite de couleur
+      // remonte le tableau par la fin
+      return COLORS.length - 1 - lastIndexColor + offset;
+    } else if (lastIndexColor + offset >= COLORS.length) {
+      // recommence au debut du tableau
+      return lastIndexColor + offset - COLORS.length;
+    } else {
+      return lastIndexColor + offset;
     }
   }
 
-  function getCells(table: number[][]) {
-    const cells = [] as { x: number; y: number }[];
-    table.forEach((row, iRow) => {
-      row.forEach((cell, iCell) => {
-        cells.push({ x: iCell, y: iRow });
-      });
-    });
-    return cells;
+  function calcMatrix(squareSize: number) {
+    const index = { x: 0, y: 0 };
+    const squaresPerLine = Math.ceil(window.screen.width / squareSize) + 1;
+    const nbLines = Math.ceil(window.screen.height / squareSize) + 1;
+    const previousLine = [] as number[];
+    const table = [] as number[][];
+    let lastIndexColor = 0;
+    // init first line with random colors
+    for (index.x = 0; index.x < squaresPerLine; index.x += 1) {
+      previousLine[index.x] = Math.floor(Math.random() * COLORS.length);
+    }
+    // calc all lines
+    for (index.y = 0; index.y < nbLines; index.y += 1) {
+      for (index.x = 0; index.x < squaresPerLine; index.x += 1) {
+        const indexColor = getIndexColor(index.x, squaresPerLine, lastIndexColor, previousLine);
+        previousLine[index.x] = indexColor;
+        lastIndexColor = indexColor;
+      }
+      table.push([...previousLine]);
+    }
+    return { squareSize, table };
   }
+
+  async function draw() {
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.screen.width;
+    canvas.height = window.screen.height;
+
+    let squareSize = 128;
+    const matrices: { squareSize: number; table: number[][] }[] = [];
+    while (squareSize >= 4) {
+      matrices.push(calcMatrix(squareSize));
+      squareSize = Math.round(squareSize / 2);
+    }
+
+    const PALETTES = {} as Record<number, HTMLCanvasElement[]>;
+    for (const matrix of matrices) {
+      PALETTES[matrix.squareSize] = COLORS.map((color) => {
+        const canvas = document.createElement('canvas');
+        canvas.width = matrix.squareSize;
+        canvas.height = matrix.squareSize;
+        const ctx = canvas.getContext('2d');
+        ctx!.fillStyle = color;
+        ctx!.fillRect(0, 0, matrix.squareSize, matrix.squareSize);
+        return canvas;
+      });
+
+      let bagOfSquare = 0;
+      for (const [y, row] of matrix.table.entries()) {
+        const rowMapped = row.map((indexColor, x) => {
+          return { indexColor, x, y };
+        });
+
+        while (rowMapped.length) {
+          const cell = rowMapped.splice(Math.floor(Math.random() * rowMapped.length), 1)[0];
+          ctx!.drawImage(PALETTES[matrix.squareSize][cell.indexColor], cell.x * matrix.squareSize, cell.y * matrix.squareSize);
+          if (bagOfSquare > 50 + 1000 / matrix.squareSize) {
+            await new Promise((resolve) => {
+              requestAnimationFrame(resolve);
+            });
+            bagOfSquare = 0;
+          } else {
+            bagOfSquare += 1;
+          }
+        }
+      }
+    }
+  }
+  drawThrottle();
 </script>
+
+<style>
+  #background-canvas {
+    image-rendering: pixelated;
+  }
+</style>
 
 <canvas
   class="fixed z-0"
