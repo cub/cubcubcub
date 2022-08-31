@@ -2,7 +2,7 @@
   import throttle from 'lodash.throttle';
 
   const drawThrottle = throttle(draw, 500);
-  window.onresize = drawThrottle;
+  window.addEventListener('resize', drawThrottle);
 
   const COLORS = [
     '#141414',
@@ -17,22 +17,12 @@
     '#424242',
     '#474747',
     '#4D4D4D',
-    '#525252',
-    '#4D4D4D',
-    '#474747',
-    '#424242',
-    '#3D3D3D',
-    '#383838',
-    '#333333',
-    '#2E2E2E',
-    '#292929',
-    '#242424',
-    '#1F1F1F',
-    '#191919',
-    '#141414'
+    '#525252'
   ];
 
   const canvas = document.querySelector('#background-canvas') as HTMLCanvasElement;
+
+  drawThrottle();
 
   function randomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -50,21 +40,20 @@
         return previousLine[indexCell + offset];
       }
     } else if (lastIndexColor + offset < 0) {
-      // continue la suite de couleur
       // remonte le tableau par la fin
-      return COLORS.length - 1 - lastIndexColor + offset;
+      return (lastIndexColor + offset) * -1;
     } else if (lastIndexColor + offset >= COLORS.length) {
-      // recommence au debut du tableau
-      return lastIndexColor + offset - COLORS.length;
+      // recommence en partant de la fin du tableau
+      return COLORS.length - 1 - (lastIndexColor + offset - (COLORS.length - 1));
     } else {
       return lastIndexColor + offset;
     }
   }
 
-  function calcMatrix(squareSize: number) {
+  function calcMatrix(resolution: ReturnType<typeof getDrawResolution>, squareSize: number) {
     const index = { x: 0, y: 0 };
-    const squaresPerLine = Math.ceil(window.screen.width / squareSize) + 1;
-    const nbLines = Math.ceil(window.screen.height / squareSize) + 1;
+    const squaresPerLine = Math.ceil(resolution.width / squareSize) + 1;
+    const nbLines = Math.ceil(resolution.height / squareSize) + 1;
     const previousLine = [] as number[];
     const table = [] as number[][];
     let lastIndexColor = 0;
@@ -84,15 +73,22 @@
     return { squareSize, table };
   }
 
+  function getDrawResolution() {
+    return { width: window.innerWidth, height: window.innerHeight };
+  }
+
   async function draw() {
     const ctx = canvas.getContext('2d');
-    canvas.width = window.screen.width;
-    canvas.height = window.screen.height;
+    const resolution = getDrawResolution();
+    canvas.width = resolution.width;
+    canvas.height = resolution.height;
+
+    const snapshotScreen = JSON.stringify(getDrawResolution());
 
     let squareSize = 128;
     const matrices: { squareSize: number; table: number[][] }[] = [];
     while (squareSize >= 4) {
-      matrices.push(calcMatrix(squareSize));
+      matrices.push(calcMatrix(resolution, squareSize));
       squareSize = Math.round(squareSize / 2);
     }
 
@@ -110,6 +106,11 @@
 
       let bagOfSquare = 0;
       for (const [y, row] of matrix.table.entries()) {
+        // stop render old resolution
+        if (JSON.stringify(getDrawResolution()) !== snapshotScreen) {
+          return;
+        }
+
         const rowMapped = row.map((indexColor, x) => {
           return { indexColor, x, y };
         });
@@ -129,7 +130,6 @@
       }
     }
   }
-  drawThrottle();
 </script>
 
 <style>
