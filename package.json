@@ -11,17 +11,13 @@
   },
   "devDependencies": {
     "@astrojs/tailwind": "^1.0.0",
-    "@astrojs/vue": "^1.0.0",
     "@types/lodash.throttle": "^4.1.7",
-    "astro": "^1.0.7",
-    "astro-compress": "^1.0.5",
-    "sass": "^1.54.5",
-    "vue": "^3.2.37"
+    "astro": "^1.1.3",
+    "astro-compress": "^1.0.6",
+    "sass": "^1.54.8"
   },
   "dependencies": {
     "lodash.throttle": "^4.1.1",
-    "motion": "^10.14.1",
-    "popmotion": "^11.0.5",
-    "stylefire": "^7.0.3"
+    "motion": "^10.14.1"
   }
 }
