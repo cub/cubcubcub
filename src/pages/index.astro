@@ -45,11 +45,7 @@ import './anim.scss';
     ],
     ['#header-card-hello', { opacity: [0, 1] }, { duration: 1, at: '-1.5' }],
     ['#header-card-mynameis', { opacity: [0, 1], height: [0, '28px'] }, { height: { easing: spring({ stiffness: 80 }) }, duration: 2 }],
-    [
-      '#header-card-cub',
-      { opacity: [0, 1], height: [0, '128px'] },
-      { height: { easing: spring({ stiffness: 80 }) }, duration: 2, at: '-2' }
-    ],
+    ['#header-card-cub', { opacity: [0, 1], height: [0, '128px'] }, { height: { easing: spring({ stiffness: 80 }) }, duration: 2, at: '-2' }],
     ['#mask-c', { strokeDashoffset: [0, '-60px'] }, { easing: 'ease-out', duration: 1, at: '-1' }],
     ['#mask-u', { strokeDashoffset: [0, '-60px'] }, { easing: 'ease-out', duration: 1.2, at: '-0.3' }],
     ['#mask-b1', { strokeDashoffset: [0, '-60px'] }, { easing: 'ease-out', duration: 0.8, at: '-0.3' }],
@@ -189,7 +185,7 @@ import './anim.scss';
         </li>
         <li class="mb-2">
           <SpanStyled>Tools:</SpanStyled>
-          NodeJS, NPM, Git, Vite, BrowserSync, ...
+          Node.js, NPM, Git, Vite, BrowserSync, ...
         </li>
         <li class="mb-2">
           <SpanStyled>Languages:</SpanStyled>
@@ -204,18 +200,23 @@ import './anim.scss';
     </Card>
 
     <Card title="Projects">
-      <H2Styled>cubcubcub</H2Styled>
+      <H2Styled>Cubcubcub</H2Styled>
       <ul>
         <li class="mb-1">
           <SpanStyled>Description:</SpanStyled>
-          This website.
+          This website 😎</li>
+        <li class="mb-1">
+          <SpanStyled>Source:</SpanStyled> <a
+          target="_blank"
+          href="https://github.com/cub/cubcubcub">github.com/cub/cubcubcub</a
+        >
         </li>
         <li class="mb-1">
           <SpanStyled>Status:</SpanStyled> ✔️ active
         </li>
         <li class="mb-3">
           <SpanStyled>Stack:</SpanStyled>
-          Astro, TailwindCSS, Motion One, Cloudflare, Github, Certbot
+          Astro, TailwindCSS, Motion One, Cloudflare, Github
         </li>
       </ul>
       <H2Styled>Motoko</H2Styled>
@@ -246,7 +247,7 @@ import './anim.scss';
           <SpanStyled>Stack:</SpanStyled> Vue, Phaser, PeerJS
         </li>
       </ul>
-      <H2Styled>cake is a lie</H2Styled>
+      <H2Styled>Cake is a lie</H2Styled>
       <ul>
         <li class="mb-1">
           <SpanStyled>Description:</SpanStyled>
@@ -256,7 +257,7 @@ import './anim.scss';
           <SpanStyled>Status:</SpanStyled> 💤 paused, 📅 2017-2019
         </li>
         <li class="">
-          <SpanStyled>Stack:</SpanStyled> Vue, Phaser, NodeJS
+          <SpanStyled>Stack:</SpanStyled> Vue, Phaser, Node.js
         </li>
       </ul>
     </Card>
@@ -290,7 +291,11 @@ import './anim.scss';
             alt="Logo LinkedIn"
             src="/icon/linkedin.svg"
           />
-          <a href="https://linkedin.com/in/cubcubcub"><span>linkedin.com/in/cubcubcub</span></a>
+          <a
+            href="https://linkedin.com/in/cubcubcub"
+            target="_blank"
+            ><span>linkedin.com/in/cubcubcub</span>
+          </a>
         </li>
       </ul>
     </Card>
