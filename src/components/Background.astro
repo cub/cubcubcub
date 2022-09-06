@@ -74,7 +74,7 @@
   }
 
   function getDrawResolution() {
-    return { width: window.innerWidth, height: window.innerHeight };
+    return canvas.getBoundingClientRect();
   }
 
   async function draw() {
@@ -139,5 +139,5 @@
 </style>
 
 <canvas
-  class="fixed z-0"
+  class="fixed w-screen h-screen z-0"
   id="background-canvas"></canvas>
