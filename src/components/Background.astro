@@ -1,8 +1,8 @@
 <script>
   import throttle from 'lodash.throttle';
 
-  const drawThrottle = throttle(draw, 500);
-  window.addEventListener('resize', drawThrottle);
+  const onResizeThrottle = throttle(onResize, 500);
+  window.addEventListener('resize', onResizeThrottle);
 
   const COLORS = [
     '#141414',
@@ -22,7 +22,18 @@
 
   const canvas = document.querySelector('#background-canvas') as HTMLCanvasElement;
 
-  drawThrottle();
+  function onResize() {
+    const resolution = getDrawResolution();
+    if (isCanvasNeedRefresh(canvas, resolution)) {
+      draw();
+    }
+  }
+
+  function isCanvasNeedRefresh(source: ReturnType<typeof getDrawResolution>, resolution: ReturnType<typeof getDrawResolution>) {
+    return source.width < resolution.width || source.height < resolution.height;
+  }
+
+  onResizeThrottle();
 
   function randomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -74,7 +85,7 @@
   }
 
   function getDrawResolution() {
-    return canvas.getBoundingClientRect();
+    return { width: window.innerWidth, height: window.innerHeight };
   }
 
   async function draw() {
@@ -82,8 +93,6 @@
     const resolution = getDrawResolution();
     canvas.width = resolution.width;
     canvas.height = resolution.height;
-
-    const snapshotScreen = JSON.stringify(getDrawResolution());
 
     let squareSize = 128;
     const matrices: { squareSize: number; table: number[][] }[] = [];
@@ -94,6 +103,7 @@
 
     const PALETTES = {} as Record<number, HTMLCanvasElement[]>;
     for (const matrix of matrices) {
+      // draw offset canvas for caching square bitmap for every size
       PALETTES[matrix.squareSize] = COLORS.map((color) => {
         const canvas = document.createElement('canvas');
         canvas.width = matrix.squareSize;
@@ -104,10 +114,10 @@
         return canvas;
       });
 
-      let bagOfSquare = 0;
+      let poolOfSquares = 0;
       for (const [y, row] of matrix.table.entries()) {
         // stop render old resolution
-        if (JSON.stringify(getDrawResolution()) !== snapshotScreen) {
+        if (isCanvasNeedRefresh(resolution, getDrawResolution())) {
           return;
         }
 
@@ -118,13 +128,13 @@
         while (rowMapped.length) {
           const cell = rowMapped.splice(Math.floor(Math.random() * rowMapped.length), 1)[0];
           ctx!.drawImage(PALETTES[matrix.squareSize][cell.indexColor], cell.x * matrix.squareSize, cell.y * matrix.squareSize);
-          if (bagOfSquare > 50 + 1000 / matrix.squareSize) {
+          if (poolOfSquares > 50 + 1000 / matrix.squareSize) {
             await new Promise((resolve) => {
               requestAnimationFrame(resolve);
             });
-            bagOfSquare = 0;
+            poolOfSquares = 0;
           } else {
-            bagOfSquare += 1;
+            poolOfSquares += 1;
           }
         }
       }
@@ -139,5 +149,5 @@
 </style>
 
 <canvas
-  class="fixed w-screen h-screen z-0"
+  class="fixed z-0"
   id="background-canvas"></canvas>
