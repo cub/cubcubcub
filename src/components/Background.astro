@@ -94,7 +94,7 @@
     canvas.width = resolution.width;
     canvas.height = resolution.height;
 
-    let squareSize = 128;
+    let squareSize = 256;
     const matrices: { squareSize: number; table: number[][] }[] = [];
     while (squareSize >= 4) {
       matrices.push(calcMatrix(resolution, squareSize));
@@ -128,16 +128,25 @@
         while (rowMapped.length) {
           const cell = rowMapped.splice(Math.floor(Math.random() * rowMapped.length), 1)[0];
           ctx!.drawImage(PALETTES[matrix.squareSize][cell.indexColor], cell.x * matrix.squareSize, cell.y * matrix.squareSize);
-          if (poolOfSquares > 50 + 1000 / matrix.squareSize) {
-            await new Promise((resolve) => {
-              requestAnimationFrame(resolve);
-            });
+          if (poolOfSquares > (1 / (matrix.squareSize * 2)) * 1000) {
+            await Promise.allSettled([
+              new Promise((resolve) => {
+                setTimeout(resolve, 42);
+              }),
+              await new Promise((resolve) => {
+                requestAnimationFrame(resolve);
+              })
+            ]);
+
             poolOfSquares = 0;
           } else {
             poolOfSquares += 1;
           }
         }
       }
+      await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+      });
     }
   }
 </script>
