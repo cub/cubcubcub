@@ -20,7 +20,7 @@
   const followCursorThrottle = throttle(followCursor, TIMING_MOUSE_FOLLOW * 1000);
   document.addEventListener('mousemove', followCursorThrottle);
 
-  timeline([
+  window.logoTimeline = timeline([
     [
       '#cat',
       { opacity: [0, 1], scaleX: [10, 1] },
@@ -58,7 +58,7 @@
 <div class="flex min-h-screen justify-center items-center overflow-x-hidden mb-60">
   <header class="max-w-lg mx-auto w-[500px]">
     <div
-      class="relative aspect-[500/365] mb-3"
+      class="relative opacity-0 aspect-[500/365] mb-3"
       aria-label="Stylized visage of a cat in black and white"
       role="img"
       id="cat"
@@ -79,7 +79,7 @@
 
     <h1
       id="header-card"
-      class="bg-black border-y border-neutral-400 rounded-xl shadow-lg overflow-hidden"
+      class="bg-black border-y border-neutral-400 opacity-0 rounded-xl shadow-lg overflow-hidden"
     >
       <div class="bg-white text-center text-black p-3">
         <div

@@ -41,7 +41,10 @@
     return source.width < resolution.width || source.height < resolution.height;
   }
 
-  onResizeThrottle();
+  window.logoTimeline.finished.then(()=>{
+    console.log('logo-animation-finised..')
+    onResizeThrottle()
+  })
 
   function randomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -93,7 +96,7 @@
   }
 
   function getDrawResolution() {
-    return { width: window.innerWidth, height: window.innerHeight + 100 }; // 100px = bonus height for mobile adress bar
+    return { width: window.innerWidth, height: window.innerHeight };
   }
 
   function flatMatrixTable(matrix: number[][]) {
@@ -118,7 +121,7 @@
     }
 
     const matrices: { squareSize: number; table: number[][] }[] = [];
-    while (squareSize >= 4) {
+    while (squareSize >= 8) {
       matrices.push(calcMatrix(resolution, squareSize));
       squareSize = Math.round(squareSize / 2);
     }
@@ -146,7 +149,7 @@
       }
 
       let poolOfSquares = 0;
-      const POOL_OF_SQUARES_MAX = 50;
+      const POOL_OF_SQUARES_MAX = 42;
 
       // colors are stored from darkest to lightest (COLORS[0] = dark, COLORS[13] = light)
       // start to search for the darkest
@@ -162,9 +165,11 @@
             return;
           }
 
-          let previousCell = shuffle(previousMatrixTable.filter((cell)=>{
-            return cell.indexColor === currentIndexColor;
-          })).pop();
+          let previousCell = shuffle(
+            previousMatrixTable.filter((cell) => {
+              return cell.indexColor === currentIndexColor;
+            })
+          ).pop();
 
           const targetCell = { x: 0, y: 0 };
           if (previousCell) {
@@ -209,6 +214,11 @@
               requestAnimationFrame(resolve);
             });
           }
+        }
+        if (cellsOfMyColor.length) {
+          await new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          });
         }
       }
     }
