@@ -3,6 +3,7 @@
   import throttle from 'lodash.throttle';
 
   const cat = document.querySelector('#cat') as HTMLElement;
+  const catBackground = document.querySelector('#catBackground') as HTMLElement;
   const catBorder = document.querySelector('#catBorder') as HTMLElement;
   const TIMING_MOUSE_FOLLOW = 50 / 1000; //sec
 
@@ -18,7 +19,6 @@
   }
 
   const followCursorThrottle = throttle(followCursor, TIMING_MOUSE_FOLLOW * 1000);
-  document.addEventListener('mousemove', followCursorThrottle);
 
   timeline([
     [
@@ -47,6 +47,51 @@
     ['#mask-b1-path', { strokeDashoffset: ['60px', 0] }, { easing: 'ease-out', duration: 0.8, at: '-0.3' }],
     ['#mask-b2-path', { strokeDashoffset: ['60px', 0] }, { easing: 'ease-out', duration: 1, at: '-0.3' }]
   ]);
+
+  document.addEventListener('mousemove', followCursorThrottle);
+
+  function cleanCatClone(cc: HTMLElement) {
+    cc.removeAttribute('aria-label');
+    cc.removeAttribute('style');
+    cc.classList.remove('mb-3', 'relative');
+    cc.classList.add('absolute', 'w-full', 'h-full', 'pointer-events-none');
+    Array.from(cc.children).forEach((child) => child.removeAttribute('id'));
+  }
+
+  const catCloneBehind = cat.cloneNode(true) as HTMLElement;
+  catCloneBehind.setAttribute('id', 'catCloneBehind');
+  cleanCatClone(catCloneBehind);
+  const catCloneHover = cat.cloneNode(true) as HTMLElement;
+  catCloneHover.setAttribute('id', 'catCloneHover');
+  cleanCatClone(catCloneHover);
+
+  animeCat(catCloneBehind, 0.5, 0.3, 0.6);
+  animeCat(catCloneHover, 0.3, 0.2, 1);
+  cat.insertBefore(catCloneBehind, catBackground);
+  cat.insertBefore(catCloneHover, catBorder);
+
+  function animeCat(cat: HTMLElement, opacityMax: number, scaleMax: number, duration: number) {
+    const opacity = 0.1 + Math.random() * opacityMax;
+    const scaleX = 0.95 + Math.random() * scaleMax;
+    const scaleY = 0.9 + Math.random() * scaleMax;
+    const y1 = Math.random() * 95;
+    const y2 = y1 + Math.random() * (100 - y1);
+    animate(
+      cat,
+      {
+        opacity: opacity,
+        transform: `scaleX(${scaleX}) scaleY(${scaleY})`,
+        clipPath: `polygon(0% ${y1}%,100% ${y1}%,100% ${y2}%,0% ${y2}%)`
+      },
+      { duration, easing: 'linear' }
+    );
+  }
+  setInterval(() => {
+    animeCat(catCloneBehind, 0.5, 0.3, 0.6);
+  }, 600);
+  setInterval(() => {
+    animeCat(catCloneHover, 0.3, 0.2, 1);
+  }, 1000);
 </script>
 
 <style>
@@ -56,12 +101,13 @@
 </style>
 
 <div class="flex min-h-screen justify-center items-center overflow-x-hidden mb-60">
-  <header class="max-w-lg mx-auto w-[500px]">
+  <header class="max-w-lg mx-auto w-[500px] relative">
     <div
       class="relative aspect-[500/365] mb-3"
       aria-label="Stylized visage of a cat in black and white"
       role="img"
       id="cat"
+      style="opacity: 0;"
     >
       <img
         id="catBackground"
@@ -120,7 +166,8 @@
               fill="none"
               stroke="#fff"
               stroke-width="6.5"
-              d="M48.2 27c-.4-4.1 7.5-14 12.1-12.7 6.3 1.8 6 10.9 3.8 13.4-2.6 3-5.3 3.2-13.8-1.7"></path>
+              d="M48.2 27c-.4-4.1 7.5-14 12.1-12.7 6.3 1.8 6 10.9 3.8 13.4-2.6 3-5.3 3.2-13.8-1.7"
+            ></path>
           </mask>
           <path
             mask="url(#mask-b1)"
@@ -135,7 +182,8 @@
               fill="none"
               stroke="#fff"
               stroke-width="8"
-              d="M44.9.9C48 15 48.5 25 48 31"></path>
+              d="M44.9.9C48 15 48.5 25 48 31"
+            ></path>
           </mask>
           <path
             mask="url(#mask-u)"
@@ -150,7 +198,8 @@
               fill="none"
               stroke="#fff"
               stroke-width="8"
-              d="M24.7 8.4c-1.1 10-3 20.7 4.2 21.4 9 1 10-12.7 9.6-20.3"></path>
+              d="M24.7 8.4c-1.1 10-3 20.7 4.2 21.4 9 1 10-12.7 9.6-20.3"
+            ></path>
           </mask>
           <path
             mask="url(#mask-c)"
@@ -165,7 +214,8 @@
               fill="none"
               stroke="#fff"
               stroke-width="8"
-              d="M17.3 16.8c-4.6-6.2-8.1-6.5-11.2-2.9-3.1 3.6-3 12 1.5 14 4.4 2.2 8.2-1.3 12.3-3"></path>
+              d="M17.3 16.8c-4.6-6.2-8.1-6.5-11.2-2.9-3.1 3.6-3 12 1.5 14 4.4 2.2 8.2-1.3 12.3-3"
+            ></path>
           </mask>
         </svg>
       </div>
