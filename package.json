@@ -12,7 +12,7 @@
   "devDependencies": {
     "@astrojs/tailwind": "^5.1.2",
     "@types/lodash.throttle": "^4.1.8",
-    "astro": "^4.16.0",
+    "astro": "^4.16.3",
     "astro-compress": "^2.1.5"
   },
   "dependencies": {
