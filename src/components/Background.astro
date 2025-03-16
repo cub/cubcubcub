@@ -1,5 +1,13 @@
 <script>
   import throttle from 'lodash.throttle';
+  import shuffle from 'lodash.shuffle';
+
+  interface MappedCellMatrix {
+    indexColor: number;
+    x: number;
+    y: number;
+    nuked: number;
+  }
 
   const onResizeThrottle = throttle(onResize, 500);
   window.addEventListener('resize', onResizeThrottle);
@@ -33,7 +41,10 @@
     return source.width < resolution.width || source.height < resolution.height;
   }
 
+  // window.logoTimeline.finished.then(()=>{
+  // console.log('logo-animation-finised..')
   onResizeThrottle();
+  // })
 
   function randomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -88,6 +99,16 @@
     return { width: window.innerWidth, height: window.innerHeight };
   }
 
+  function flatMatrixTable(matrix: number[][]) {
+    return matrix
+      .map((row, y) => {
+        return row.map((indexColor, x) => {
+          return { indexColor, x, y, nuked: 0 };
+        });
+      })
+      .flat();
+  }
+
   async function draw() {
     const ctx = canvas.getContext('2d');
     const resolution = getDrawResolution();
@@ -95,14 +116,18 @@
     canvas.height = resolution.height;
 
     let squareSize = 256;
+    /* while (squareSize < resolution.width || squareSize < resolution.height) {
+      squareSize = squareSize * 2;
+    } */
+
     const matrices: { squareSize: number; table: number[][] }[] = [];
-    while (squareSize >= 4) {
+    while (squareSize >= 8) {
       matrices.push(calcMatrix(resolution, squareSize));
       squareSize = Math.round(squareSize / 2);
     }
 
     const PALETTES = {} as Record<number, HTMLCanvasElement[]>;
-    for (const matrix of matrices) {
+    for (const [index, matrix] of matrices.entries()) {
       // draw offset canvas for caching square bitmap for every size
       PALETTES[matrix.squareSize] = COLORS.map((color) => {
         const canvas = document.createElement('canvas');
@@ -114,39 +139,88 @@
         return canvas;
       });
 
-      let poolOfSquares = 0;
-      for (const [y, row] of matrix.table.entries()) {
-        // stop render old resolution
-        if (isCanvasNeedRefresh(resolution, getDrawResolution())) {
-          return;
-        }
+      // store a copy of the matrix, flatted with all cell as an object MappedCellMatrix
+      const currentMatrixTable = flatMatrixTable(matrix.table);
+      let previousMatrixTable: MappedCellMatrix[];
+      if (index === 0) {
+        previousMatrixTable = [{ indexColor: 0, x: 0, y: 0, nuked: 0 }];
+      } else {
+        previousMatrixTable = flatMatrixTable(matrices[index - 1].table);
+      }
 
-        const rowMapped = row.map((indexColor, x) => {
-          return { indexColor, x, y };
+      let poolOfSquares = 0;
+      const POOL_OF_SQUARES_MAX = 42;
+
+      // colors are stored from darkest to lightest (COLORS[0] = dark, COLORS[13] = light)
+      // start to search for the darkest
+      for (let currentIndexColor = 0; currentIndexColor < COLORS.length; currentIndexColor++) {
+        const cellsOfMyColor = previousMatrixTable.filter((cell) => {
+          return cell.indexColor === currentIndexColor;
         });
 
-        while (rowMapped.length) {
-          const cell = rowMapped.splice(Math.floor(Math.random() * rowMapped.length), 1)[0];
-          ctx!.drawImage(PALETTES[matrix.squareSize][cell.indexColor], cell.x * matrix.squareSize, cell.y * matrix.squareSize);
-          if (poolOfSquares > (1 / (matrix.squareSize * 2)) * 1000) {
-            await Promise.allSettled([
-              new Promise((resolve) => {
-                setTimeout(resolve, 42);
-              }),
-              await new Promise((resolve) => {
-                requestAnimationFrame(resolve);
-              })
-            ]);
+        let cellDrawed = 0;
+        while (cellDrawed < cellsOfMyColor.length * 4) {
+          // stop render old resolution
+          if (isCanvasNeedRefresh(resolution, getDrawResolution())) {
+            return;
+          }
 
+          let previousCell = shuffle(
+            previousMatrixTable.filter((cell) => {
+              return cell.indexColor === currentIndexColor;
+            })
+          ).pop();
+
+          const targetCell = { x: 0, y: 0 };
+          if (previousCell) {
+            switch (previousCell.nuked) {
+              case 0:
+                targetCell.x = previousCell.x * 2;
+                targetCell.y = previousCell.y * 2;
+                break;
+              case 1:
+                targetCell.x = previousCell.x * 2 + 1;
+                targetCell.y = previousCell.y * 2;
+                break;
+              case 2:
+                targetCell.x = previousCell.x * 2;
+                targetCell.y = previousCell.y * 2 + 1;
+                break;
+              case 3:
+                targetCell.x = previousCell.x * 2 + 1;
+                targetCell.y = previousCell.y * 2 + 1;
+                break;
+            }
+            previousCell.nuked++;
+            // remove possible cells that have already been used 4 times
+            previousMatrixTable = previousMatrixTable.filter((cell) => {
+              return cell.nuked < 4;
+            });
+          }
+
+          const cellToDraw = currentMatrixTable.find((cell) => {
+            return cell.x === targetCell.x && cell.y === targetCell.y;
+          });
+
+          if (cellToDraw) {
+            ctx!.drawImage(PALETTES[matrix.squareSize][cellToDraw.indexColor], cellToDraw.x * matrix.squareSize, cellToDraw.y * matrix.squareSize);
+            cellDrawed++;
+            poolOfSquares++;
+          }
+
+          if (poolOfSquares > POOL_OF_SQUARES_MAX) {
             poolOfSquares = 0;
-          } else {
-            poolOfSquares += 1;
+            await new Promise((resolve) => {
+              requestAnimationFrame(resolve);
+            });
           }
         }
+        if (cellsOfMyColor.length) {
+          await new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          });
+        }
       }
-      await new Promise((resolve) => {
-        setTimeout(resolve, 500);
-      });
     }
   }
 </script>
@@ -159,4 +233,5 @@
 
 <canvas
   class="fixed z-0"
-  id="background-canvas"></canvas>
+  id="background-canvas"
+></canvas>

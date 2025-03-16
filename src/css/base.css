@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  a {
+    @apply p-1 underline decoration-dashed decoration-1 decoration-neutral-400 underline-offset-2 leading-none rounded transition bg-transparent hover:bg-white hover:text-black;
+  }
+}
+
+@font-face {
+  font-family: 'Gochi Hand';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/gochi-hand.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Ubuntu';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(/fonts/ubuntu.woff2) format('woff2');
+}

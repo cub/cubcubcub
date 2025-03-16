@@ -1,6 +1,6 @@
 {
-  "name": "@example/basics",
-  "version": "0.0.1",
+  "name": "cubcubcub",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "astro dev",
@@ -11,13 +11,15 @@
   },
   "devDependencies": {
     "@astrojs/tailwind": "^5.1.2",
-    "@types/lodash.throttle": "^4.1.8",
+    "@types/lodash.shuffle": "^4.2.8",
+    "@types/lodash.throttle": "^4.1.9",
     "astro": "^4.16.18",
     "astro-compress": "^2.1.5"
   },
   "dependencies": {
+    "lodash.shuffle": "^4.2.0",
     "lodash.throttle": "^4.1.1",
-    "motion": "^10.16.4",
-    "typescript": "^5.2.2"
+    "motion": "^10.17.0",
+    "typescript": "^5.4.5"
   }
 }
