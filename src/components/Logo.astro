@@ -31,12 +31,11 @@
     ],
     [
       '#header-card',
-      { opacity: [0, 1], scaleX: [10, 1], scaleY: [0.1, 1] },
+      { opacity: [0, 1], scaleY: [0, 1] },
       {
-        opacity: { easing: 'linear', duration: 1 },
-        scaleX: { easing: spring({ stiffness: 72 }), duration: 1 },
-        scaleY: { easing: spring({ stiffness: 10 }), duration: 0.5 },
-        at: '-1'
+        opacity: { easing: 'linear', duration: 2 },
+        scaleY: { easing: spring({ stiffness: 100 }), duration: 2 },
+        at: '-0.5'
       }
     ],
     ['#header-card-hello', { opacity: [0, 1] }, { duration: 2, at: '-1.5' }],

@@ -41,10 +41,10 @@
     return source.width < resolution.width || source.height < resolution.height;
   }
 
-  window.logoTimeline.finished.then(()=>{
-    console.log('logo-animation-finised..')
-    onResizeThrottle()
-  })
+  // window.logoTimeline.finished.then(()=>{
+  // console.log('logo-animation-finised..')
+  onResizeThrottle();
+  // })
 
   function randomInteger(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -115,10 +115,10 @@
     canvas.width = resolution.width;
     canvas.height = resolution.height;
 
-    let squareSize = 512;
-    while (squareSize < resolution.width || squareSize < resolution.height) {
+    let squareSize = 256;
+    /* while (squareSize < resolution.width || squareSize < resolution.height) {
       squareSize = squareSize * 2;
-    }
+    } */
 
     const matrices: { squareSize: number; table: number[][] }[] = [];
     while (squareSize >= 8) {
@@ -233,4 +233,5 @@
 
 <canvas
   class="fixed z-0"
-  id="background-canvas"></canvas>
+  id="background-canvas"
+></canvas>

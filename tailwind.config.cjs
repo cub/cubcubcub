@@ -4,7 +4,8 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: ['Ubuntu', 'sans-serif'],
-      cursive: ['Gochi Hand', 'cursive']
+      cursive: ['Gochi Hand', 'cursive'],
+      mono: ['monospace']
     },
     extend: {
       dropShadow: {
