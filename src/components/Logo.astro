@@ -1,6 +1,6 @@
 <script>
-  import { animate, timeline, spring } from 'motion';
-  import throttle from 'lodash.throttle';
+  import { animate } from 'motion';
+  import { throttle } from 'es-toolkit';
 
   const cat = document.querySelector('#cat') as HTMLElement;
   const catBackground = document.querySelector('#catBackground') as HTMLElement;
@@ -20,32 +20,36 @@
 
   const followCursorThrottle = throttle(followCursor, TIMING_MOUSE_FOLLOW * 1000);
 
-  window.logoTimeline = timeline([
+  const sequence = [
     [
       '#cat',
       { opacity: [0, 1], scaleX: [10, 1] },
       {
-        opacity: { easing: 'linear', duration: 1 },
-        scaleX: { easing: spring({ stiffness: 72 }), duration: 1 }
+        opacity: { ease: 'linear', duration: 1 },
+        scaleX: { type: 'spring', stiffness: 72, duration: 1 }
       }
     ],
     [
       '#header-card',
       { opacity: [0, 1], scaleY: [0, 1] },
       {
-        opacity: { easing: 'linear', duration: 2 },
-        scaleY: { easing: spring({ stiffness: 100 }), duration: 2 },
+        opacity: { ease: 'linear', duration: 2 },
+        scaleY: { type: 'spring', stiffness: 100, duration: 2 },
         at: '-0.5'
       }
     ],
     ['#header-card-hello', { opacity: [0, 1] }, { duration: 2, at: '-1.5' }],
-    ['#header-card-mynameis', { opacity: [0, 1], height: [0, '28px'] }, { height: { easing: spring({ stiffness: 80 }) }, duration: 2, at: '-1' }],
-    ['#header-card-cub', { height: [0, '128px'] }, { height: { easing: spring({ velocity: 100, damping: 6 }), duration: 5 }, at: '-2' }],
-    ['#mask-c-path', { strokeDashoffset: ['60px', 0] }, { easing: 'ease-out', duration: 1, at: '-1' }],
-    ['#mask-u-path', { strokeDashoffset: ['60px', 0] }, { easing: 'ease-out', duration: 1.2, at: '-0.3' }],
-    ['#mask-b1-path', { strokeDashoffset: ['60px', 0] }, { easing: 'ease-out', duration: 0.8, at: '-0.3' }],
-    ['#mask-b2-path', { strokeDashoffset: ['60px', 0] }, { easing: 'ease-out', duration: 1, at: '-0.3' }]
-  ]);
+    ['#header-card-mynameis', { opacity: [0, 1], height: [0, '28px'] }, { height: { type: 'spring', stiffness: 80 }, duration: 2, at: '-1' }],
+    ['#header-card-cub', { height: [0, '128px'] }, { height: { type: 'spring', velocity: 100, damping: 6 }, duration: 5, at: '-2' }],
+    ['#mask-c-path', { strokeDashoffset: ['60px', 0] }, { ease: 'ease-out', duration: 1, at: '-1' }],
+    ['#mask-u-path', { strokeDashoffset: ['60px', 0] }, { ease: 'ease-out', duration: 1.2, at: '-0.3' }],
+    ['#mask-b1-path', { strokeDashoffset: ['60px', 0] }, { ease: 'ease-out', duration: 0.8, at: '-0.3' }],
+    ['#mask-b2-path', { strokeDashoffset: ['60px', 0] }, { ease: 'ease-out', duration: 1, at: '-0.3' }]
+  ];
+
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+    window.logoTimeline = animate(sequence);
+  }
 
   document.addEventListener('mousemove', followCursorThrottle);
 
