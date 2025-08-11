@@ -11,14 +11,11 @@
   },
   "devDependencies": {
     "@astrojs/tailwind": "^6.0.2",
-    "@types/lodash.shuffle": "^4.2.9",
-    "@types/lodash.throttle": "^4.1.9",
     "astro": "^5.12.9",
     "astro-compress": "^2.3.8"
   },
   "dependencies": {
-    "lodash.shuffle": "^4.2.0",
-    "lodash.throttle": "^4.1.1",
+    "es-toolkit": "^1.39.9",
     "motion": "^12.23.12",
     "typescript": "^5.9.2"
   }
