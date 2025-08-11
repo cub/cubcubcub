@@ -10,16 +10,16 @@
     "astro": "astro"
   },
   "devDependencies": {
-    "@astrojs/tailwind": "^5.1.2",
-    "@types/lodash.shuffle": "^4.2.8",
+    "@astrojs/tailwind": "^6.0.2",
+    "@types/lodash.shuffle": "^4.2.9",
     "@types/lodash.throttle": "^4.1.9",
-    "astro": "^4.16.18",
-    "astro-compress": "^2.1.5"
+    "astro": "^5.12.9",
+    "astro-compress": "^2.3.8"
   },
   "dependencies": {
     "lodash.shuffle": "^4.2.0",
     "lodash.throttle": "^4.1.1",
-    "motion": "^10.17.0",
-    "typescript": "^5.4.5"
+    "motion": "^12.23.12",
+    "typescript": "^5.9.2"
   }
 }
