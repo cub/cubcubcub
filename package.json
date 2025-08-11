@@ -13,7 +13,7 @@
     "@astrojs/tailwind": "^5.1.2",
     "@types/lodash.shuffle": "^4.2.8",
     "@types/lodash.throttle": "^4.1.9",
-    "astro": "^5.8.1",
+    "astro": "^5.12.9",
     "astro-compress": "^2.3.8"
   },
   "dependencies": {
